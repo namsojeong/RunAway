@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class UIManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class UIManager : MonoBehaviour
     GameObject[] screen;
     [SerializeField]
     GameObject[] screenObj;
+
 
     [Header("인게임")]
     [SerializeField]
@@ -31,6 +33,23 @@ public class UIManager : MonoBehaviour
         UpdateState(0);
     }
 
+    //패널 껐다키기
+    public void OpenUI(GameObject panel)
+    {
+        panel.SetActive(true);
+    }
+    public void CloseUI(GameObject panel)
+    {
+        panel.SetActive(false);
+    }
+
+    //종료
+    public void Quit()
+    {
+        Debug.Log("종료");
+            Application.Quit();
+    }
+
     //씬 업데이트
     public void UpdateState(int sc)
     {
@@ -46,7 +65,6 @@ public class UIManager : MonoBehaviour
         }
         screen[sc].SetActive(true);
         screenObj[sc].SetActive(true);
-
     }
 
     //스코어 텍스트
@@ -59,7 +77,7 @@ public class UIManager : MonoBehaviour
     //게임오버 UI 업데이트
     public void OverScoreText()
     {
-        overBestScoreText.text = string.Format("BEST {0}", GameManager.Instance.bestScore);
+        overBestScoreText.text = string.Format("BEST\n{0}", GameManager.Instance.bestScore);
         overScoreText.text = string.Format("{0}", GameManager.Instance.timeScore);
     }
 
@@ -71,6 +89,5 @@ public class UIManager : MonoBehaviour
         InGame.Instance.StartInvoke();
         GameManager.Instance.UpdateGameState(GameState.RUNNING);
     }
-
 
 }
