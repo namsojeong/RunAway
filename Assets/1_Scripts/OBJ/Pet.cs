@@ -9,10 +9,41 @@ public class Pet : MonoBehaviour
     [SerializeField]
     Transform playerT;
 
+    [SerializeField]
+    int num;
+
     Vector3 targetPosition = Vector3.zero;
 
     int isRan = 0;
     //·£´ý ¿òÁ÷ÀÓ + ÂÑ¾Æ¿À±â
+    private void Start()
+    {
+        InvokeRepeating("CheckAiCount", 0f, 0.1f);
+    }
+    void CheckAiCount()
+    {
+        if(InGame.Instance.isRunning)
+        {
+            if(InGame.Instance.aiNow==num)
+            {
+                if(num==1)
+                {
+                    
+                    if (!GameManager.Instance.isFir) return;
+                }
+                if(num==2)
+                {
+                    if (!GameManager.Instance.isSec) return;
+                }
+                if(num==3)
+                {
+                    if (!GameManager.Instance.isth) return;
+                }
+                MovePet();
+                GameManager.Instance.EnemyOn(num);
+            }
+        }
+    }
     public void MovePet()
     {
         if (!InGame.Instance.isRunning) return;
@@ -36,7 +67,7 @@ public class Pet : MonoBehaviour
                .SetEase(Ease.InQuad)
                .OnComplete(() =>
                {
-                   if (InGame.Instance.petSpeed > 0.75f && !InGame.Instance.isSmall)
+                   if (InGame.Instance.petSpeed > 0.9f && !InGame.Instance.isSmall)
                    {
                        InGame.Instance.petSpeed -= 0.07f;
                    }
@@ -64,7 +95,6 @@ public class Pet : MonoBehaviour
     }
     IEnumerator LeaveEnemy()
     {
-        
         GameObject enemy = ObjectPool.Instance.GetObject(PoolObjectType.ENEMY);
         enemy.transform.position = transform.position;
         SoundManager.Instance.SFXPlay(0);

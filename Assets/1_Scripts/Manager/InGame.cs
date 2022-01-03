@@ -14,19 +14,24 @@ public class InGame : MonoBehaviour
 
     [Header("바이러스")]
     [SerializeField]
-    GameObject ai;
+    GameObject[] ai;
+
+    int aiCount = 3;
+    public int aiNow = 1;
     
-    public float petSpeed = 3f;
     public int shieldCount = 0;
+    public float petSpeed = 3f;
 
     [Header("네모 바 적")]
     [SerializeField]
     GameObject push;
     [SerializeField]
     GameObject warn;
+
     int randomPushPos = 0;
     int pushDir = 0;
     float pushSpeed = 1f;
+
     float pushDelay = 3f;
 
     [Header("오브젝트 풀")]
@@ -36,8 +41,9 @@ public class InGame : MonoBehaviour
     public bool isShield = false;
     public bool isSmall = false;
     bool isPush = false;
-
     public bool isRunning = false;
+    public bool isStart = false;
+
 
     Coroutine SmallC;
     Coroutine ShieldC;
@@ -55,11 +61,23 @@ public class InGame : MonoBehaviour
         //상태
         if (isRunning)
         {
-            if (GameManager.Instance.timeScore >= 50)
+            if (GameManager.Instance.timeScore >= 40)
             {
                 if (isPush) return;
                 //푸쉬 에너미 생성 시작
                 InvokeRepeating("PushPosition", 0f, pushDelay);
+            }
+            if(GameManager.Instance.timeScore==150)
+            {
+                if (aiNow == 2) return;
+                aiNow = 2;
+                ai[1].SetActive(true);
+            }
+            else if(GameManager.Instance.timeScore==500)
+            {
+                if (aiNow == 3) return;
+                aiNow = 3;
+                ai[2].SetActive(true);
             }
         }
         else
@@ -71,9 +89,9 @@ public class InGame : MonoBehaviour
 
     public void StartInvoke()
     {
-        float ranDelaySlow = Random.Range(20f, 45f);
-        float ranDelayShield = Random.Range(30f, 65f);
-        float ranDelayScale = Random.Range(5f, 10f);
+        float ranDelaySlow = Random.Range(18f, 40f);
+        float ranDelayShield = Random.Range(30f, 55f);
+        float ranDelayScale = Random.Range(18f, 45f);
         InvokeRepeating("SmallSpawn", ranDelaySlow, ranDelaySlow);
         InvokeRepeating("RandomScaleSpawn", ranDelayScale, ranDelayScale);
         InvokeRepeating("ShieldSpawn", ranDelayShield, ranDelayShield);
@@ -91,7 +109,12 @@ public class InGame : MonoBehaviour
         DOTween.KillAll();
 
         //위치 제자리
-        ai.transform.position = new Vector3(-9, -3.5f, 0);
+        for(int i=0;i<aiCount;i++)
+        {
+        ai[i].transform.position = new Vector3(-9, -3.5f, 0);
+            ai[i].SetActive(false);
+        }
+        ai[0].SetActive(true);
         player.transform.position = new Vector3(0, 0, 0);
         push.transform.position = new Vector3(17f, 0f, 0f);
 
@@ -99,8 +122,15 @@ public class InGame : MonoBehaviour
         petSpeed = 3f;
         warn.SetActive(false);
         shieldCount = 0;
+        aiNow = 1;
         isPush = false;
         isShield = false;
+        isStart = true;
+
+        for(int i=2;i<aiCount;i++)
+        {
+            GameManager.Instance.EnemyOff(i);
+        }
 
         //오브젝트 리턴
         for (int i = 0; i < pool.transform.childCount; i++)
@@ -142,7 +172,7 @@ public class InGame : MonoBehaviour
                 isPush = false;
                 if (pushSpeed >= 0.5)
                     pushSpeed -= 0.05f;
-                pushDelay = Random.Range(5, 25f);
+                pushDelay = Random.Range(10f, 30f);
                 SoundManager.Instance.SFXStop();
                 SoundManager.Instance.SFXPlay(2);
                 StopCoroutine("WarnTime");
@@ -165,13 +195,19 @@ public class InGame : MonoBehaviour
     public void Small()
     {
         isSmall = true;
-        ai.transform.DOScale(new Vector3(0.5f, 0.5f, 1f), 1f);
+        for(int i=0;i<aiCount;i++)
+        {
+        ai[i].transform.DOScale(new Vector3(0.5f, 0.5f, 1f), 1f);
+        }
         StartCoroutine(SmallTime());
     }
     IEnumerator SmallTime()
     {
         yield return new WaitForSeconds(5f);
-        ai.transform.DOScale(new Vector3(1.3f, 1.3f, 1f), 1f);
+        for(int i=0;i<aiCount;i++)
+        {
+        ai[i].transform.DOScale(new Vector3(1.3f, 1.3f, 1f), 1f);
+        }
         isSmall = false;
 
     }

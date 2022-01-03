@@ -84,7 +84,7 @@ public class UIManager : MonoBehaviour
     //플레이버튼 함수
     public void StartPlay()
     {
-
+        GameManager.Instance.EnemyOn(1);
         InGame.Instance.PlayerSetting();
         InGame.Instance.StartInvoke();
         GameManager.Instance.UpdateGameState(GameState.RUNNING);
