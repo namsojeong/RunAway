@@ -37,6 +37,10 @@ public class SoundManager : MonoBehaviour
     {
         SFXSource.PlayOneShot(SFXClip[n]);
     }
+    public void SFXStop()
+    {
+        SFXSource.Stop();
+    }
 
     //배경음 사운드
     public void BGMPlay()

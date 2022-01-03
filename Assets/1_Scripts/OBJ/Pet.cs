@@ -12,14 +12,12 @@ public class Pet : MonoBehaviour
     Vector3 targetPosition = Vector3.zero;
 
     int isRan = 0;
-
     //랜덤 움직임 + 쫓아오기
     public void MovePet()
     {
         if (!InGame.Instance.isRunning) return;
         else
         {
-
             if (isRan >= 40)
             {
                 targetPosition.x = playerT.position.x;
@@ -32,32 +30,31 @@ public class Pet : MonoBehaviour
             }
 
             targetPosition.z = 0f;
+
+            if (!InGame.Instance.isRunning){return;  }
+                transform.DOMove(targetPosition, InGame.Instance.petSpeed, false)
+               .SetEase(Ease.InQuad)
+               .OnComplete(() =>
+               {
+                   if (InGame.Instance.petSpeed > 0.75f && !InGame.Instance.isSmall)
+                   {
+                       InGame.Instance.petSpeed -= 0.07f;
+                   }
+                   if (isRan >= 40)
+                   {
+                       isRan = Random.Range(0, 101);
+                       MovePet();
+                   }
+                   else
+                   {
+                       isRan = Random.Range(0, 101);
+                       CircleMove();
+                   }
+               });
+               
+            }
             
-        if (!InGame.Instance.isRunning) return;
-            transform.DOMove(targetPosition, InGame.Instance.petSpeed, false)
-                .SetEase(Ease.InQuad)
-                .OnComplete(() =>
-                {
-                    if (InGame.Instance.petSpeed > 0.75f && !InGame.Instance.isSlow)
-                    {
-                        InGame.Instance.petSpeed -= 0.07f;
-                        
-
-                    }
-                    if (isRan >= 40)
-                    {
-                        isRan = Random.Range(0, 101);
-                        MovePet();
-                    }
-                    else
-                    {
-                        isRan = Random.Range(0, 101);
-                        CircleMove();
-                    }
-                });
         }
-
-    }
 
     //미니에너미 생성
     void CircleMove()
